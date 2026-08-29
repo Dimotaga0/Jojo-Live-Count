@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#09090b" />
+  <title>Jojo Subscriber Count</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --purple: #a78bfa;
+      --blue: #60a5fa;
+      --text-muted: #a1a1aa;
+      --card: rgba(255, 255, 255, .06);
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: 40px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #09090b;
+    }
+
+    .background {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(circle at 18% 20%, rgba(168, 85, 247, .22), transparent 33%),
+        radial-gradient(circle at 82% 78%, rgba(59, 130, 246, .20), transparent 35%),
+        linear-gradient(135deg, #09090b, #111827 55%, #09090b);
+      animation: backgroundMove 10s ease-in-out infinite alternate;
+    }
+
+    .background::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, .035), transparent 65%);
+      animation: shine 8s linear infinite;
+    }
+
+    @keyframes backgroundMove {
+      from { transform: scale(1); filter: hue-rotate(0deg); }
+      to { transform: scale(1.08); filter: hue-rotate(18deg); }
+    }
+
+    @keyframes shine {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(100%); }
+    }
+
+    .particles { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+    .particle {
+      position: absolute;
+      bottom: -12px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--purple);
+      box-shadow: 0 0 14px var(--purple);
+      animation: float 14s linear infinite;
+    }
+    .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+    .particle:nth-child(2) { left: 28%; animation-delay: 4s; }
+    .particle:nth-child(3) { left: 46%; animation-delay: 1s; }
+    .particle:nth-child(4) { left: 64%; animation-delay: 6s; }
+    .particle:nth-child(5) { left: 82%; animation-delay: 2s; }
+
+    @keyframes float {
+      0% { transform: translateY(0) scale(0); opacity: 0; }
+      12% { opacity: .9; }
+      88% { opacity: .9; }
+      100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
+    }
+
+    .container {
+      width: min(100%, 720px);
+      text-align: center;
+      animation: appear .8s ease-out both;
+    }
+
+    @keyframes appear {
+      from { opacity: 0; transform: translateY(26px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .eyebrow {
+      margin-bottom: 14px;
+      color: var(--blue);
+      font-size: .75rem;
+      font-weight: 800;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin-bottom: 38px;
+      font-size: clamp(2rem, 6vw, 3.25rem);
+      line-height: 1;
+      letter-spacing: -.06em;
+      background: linear-gradient(120deg, #fff, var(--purple), var(--blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: titleGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes titleGlow {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.22); }
+    }
+
+    .counter-card {
+      position: relative;
+      overflow: hidden;
+      padding: 46px 34px;
+      border: 1px solid rgba(167, 139, 250, .38);
+      border-radius: 24px;
+      background: var(--card);
+      box-shadow: 0 24px 80px rgba(0,0,0,.35), 0 0 60px rgba(139,92,246,.14);
+      backdrop-filter: blur(18px);
+      transition: transform .3s ease, box-shadow .3s ease;
+    }
+
+    .counter-card::before {
+      content: "";
+      position: absolute;
+      inset: -80%;
+      background: linear-gradient(45deg, transparent 45%, rgba(255,255,255,.12) 50%, transparent 55%);
+      animation: cardShine 5s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes cardShine {
+      from { transform: translate(-30%, -30%) rotate(45deg); }
+      to { transform: translate(30%, 30%) rotate(45deg); }
+    }
+
+    .counter-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 30px 90px rgba(0,0,0,.42), 0 0 85px rgba(139,92,246,.24);
+    }
+
+    .counter-card iframe {
+      position: relative;
+      z-index: 1;
+      display: block;
+      width: 450px;
+      max-width: 100%;
+      height: 120px;
+      border: 0;
+      border-radius: 12px;
+      animation: counterPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes counterPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.018); }
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .stat-card {
+      padding: 22px 16px;
+      border: 1px solid rgba(96, 165, 250, .24);
+      border-radius: 18px;
+      background: rgba(255,255,255,.055);
+      box-shadow: 0 12px 30px rgba(0,0,0,.2);
+      backdrop-filter: blur(14px);
+      transition: transform .25s ease, border-color .25s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(167, 139, 250, .65);
+    }
+
+    .stat-label {
+      display: block;
+      color: var(--text-muted);
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .stat-value {
+      display: block;
+      min-height: 38px;
+      margin-top: 9px;
+      font-size: clamp(1.5rem, 5vw, 2.35rem);
+      font-weight: 850;
+      letter-spacing: -.06em;
+      background: linear-gradient(135deg, #fff, var(--purple), var(--blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-value.updated { animation: valuePop .35s ease-out; }
+
+    @keyframes valuePop {
+      0% { transform: scale(1); filter: brightness(1); }
+      45% { transform: scale(1.075); filter: brightness(1.5); }
+      100% { transform: scale(1); filter: brightness(1); }
+    }
+
+    .footer {
+      margin-top: 38px;
+      color: #71717a;
+      font-size: .82rem;
+      letter-spacing: .04em;
+    }
+
+    .footer span {
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    @media (max-width: 520px) {
+      body { padding: 28px 14px; }
+      .counter-card { padding: 30px 14px; }
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="background"></div>
+  <div class="particles" aria-hidden="true">
+    <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+    <div class="particle"></div><div class="particle"></div>
+  </div>
+
+  <audio id="ambientMusic" loop preload="auto">
+    <source src="eerie-Rameses-B-OFFLINE-NCS-Release.mp3" type="audio/mpeg" />
+  </audio>
+
+  <main class="container">
+    <p class="eyebrow">Live YouTube statistics</p>
+    <h1>Jojo Subscriber Count</h1>
+
+    <section class="counter-card">
+      <iframe
+        src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCVwPQ0VmXRZ1ZhZMhPyhoTg"
+        title="Compteur d'abonnés YouTube en direct"
+        loading="eager">
+      </iframe>
+    </section>
+
+    <section class="stats-grid" aria-label="Statistiques YouTube">
+      <article class="stat-card">
+        <span class="stat-label">Vues de la chaîne</span>
+        <strong class="stat-value" id="channelViews">Chargement…</strong>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Vidéos</span>
+        <strong class="stat-value" id="channelVideos">Chargement…</strong>
+      </article>
+    </section>
+
+    <p class="footer">Made by <span>Dimotaga</span></p>
+  </main>
+
+  <script>
+    const formatter = new Intl.NumberFormat("fr-FR");
+    let displayedViews = null;
+    let viewTimer = null;
+
+    function updateValue(element, value, animate = false) {
+      element.textContent = formatter.format(value);
+
+      if (animate) {
+        element.classList.remove("updated");
+        void element.offsetWidth;
+        element.classList.add("updated");
+      }
+    }
+
+    function startViewAnimation() {
+      if (viewTimer) clearInterval(viewTimer);
+
+      viewTimer = setInterval(() => {
+        if (displayedViews === null) return;
+
+        // Progression visuelle, recalée sur la vraie valeur toutes les 60 secondes.
+        displayedViews += Math.floor(Math.random() * 176) + 25;
+        updateValue(document.getElementById("channelViews"), displayedViews, true);
+      }, 500);
+    }
+
+    async function loadJojoStats() {
+      try {
+        const response = await fetch("/api/youtube-stats");
+
+        if (!response.ok) {
+          throw new Error("Statistiques indisponibles");
+        }
+
+        const stats = await response.json();
+        displayedViews = Number(stats.views);
+
+        updateValue(document.getElementById("channelViews"), displayedViews, true);
+        updateValue(document.getElementById("channelVideos"), Number(stats.videos));
+        startViewAnimation();
+      } catch (error) {
+        console.error("Erreur de récupération des statistiques :", error);
+
+        if (displayedViews === null) {
+          document.getElementById("channelViews").textContent = "—";
+          document.getElementById("channelVideos").textContent = "—";
+        }
+      }
+    }
+
+    const music = document.getElementById("ambientMusic");
+    music.volume = 0.12;
+
+    async function startMusic() {
+      try {
+        await music.play();
+      } catch (_) {
+        // Le navigateur lancera la musique après la première interaction.
+      }
+    }
+
+    window.addEventListener("load", () => {
+      loadJojoStats();
+      startMusic();
+    });
+
+    document.addEventListener("pointerdown", startMusic, { once: true });
+    document.addEventListener("keydown", startMusic, { once: true });
+
+    // Synchronisation officielle avec le serveur toutes les minutes.
+    setInterval(loadJojoStats, 60_000);
+  </script>
+</body>
+</html>
