@@ -67,6 +67,7 @@
       box-shadow: 0 0 14px var(--purple);
       animation: float 14s linear infinite;
     }
+
     .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
     .particle:nth-child(2) { left: 28%; animation-delay: 4s; }
     .particle:nth-child(3) { left: 46%; animation-delay: 1s; }
@@ -123,7 +124,7 @@
       border: 1px solid rgba(167, 139, 250, .38);
       border-radius: 24px;
       background: var(--card);
-      box-shadow: 0 24px 80px rgba(0,0,0,.35), 0 0 60px rgba(139,92,246,.14);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, .35), 0 0 60px rgba(139, 92, 246, .14);
       backdrop-filter: blur(18px);
       transition: transform .3s ease, box-shadow .3s ease;
     }
@@ -132,7 +133,7 @@
       content: "";
       position: absolute;
       inset: -80%;
-      background: linear-gradient(45deg, transparent 45%, rgba(255,255,255,.12) 50%, transparent 55%);
+      background: linear-gradient(45deg, transparent 45%, rgba(255, 255, 255, .12) 50%, transparent 55%);
       animation: cardShine 5s linear infinite;
       pointer-events: none;
     }
@@ -144,7 +145,7 @@
 
     .counter-card:hover {
       transform: translateY(-6px);
-      box-shadow: 0 30px 90px rgba(0,0,0,.42), 0 0 85px rgba(139,92,246,.24);
+      box-shadow: 0 30px 90px rgba(0, 0, 0, .42), 0 0 85px rgba(139, 92, 246, .24);
     }
 
     .counter-card iframe {
@@ -175,8 +176,8 @@
       padding: 22px 16px;
       border: 1px solid rgba(96, 165, 250, .24);
       border-radius: 18px;
-      background: rgba(255,255,255,.055);
-      box-shadow: 0 12px 30px rgba(0,0,0,.2);
+      background: rgba(255, 255, 255, .055);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, .2);
       backdrop-filter: blur(14px);
       transition: transform .25s ease, border-color .25s ease;
     }
@@ -207,13 +208,45 @@
       -webkit-text-fill-color: transparent;
     }
 
-    .stat-value.updated { animation: valuePop .35s ease-out; }
+    .stat-value.updated { animation: valuePop .32s ease-out; }
 
     @keyframes valuePop {
       0% { transform: scale(1); filter: brightness(1); }
-      45% { transform: scale(1.075); filter: brightness(1.5); }
+      45% { transform: scale(1.055); filter: brightness(1.45); }
       100% { transform: scale(1); filter: brightness(1); }
     }
+
+    .music-controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .music-button {
+      appearance: none;
+      border: 1px solid rgba(167, 139, 250, .34);
+      border-radius: 12px;
+      padding: 10px 15px;
+      color: #f5f3ff;
+      background: rgba(255, 255, 255, .055);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, .16);
+      cursor: pointer;
+      font: inherit;
+      font-size: .78rem;
+      font-weight: 750;
+      letter-spacing: .03em;
+      transition: transform .2s ease, border-color .2s ease, background .2s ease;
+    }
+
+    .music-button:hover {
+      transform: translateY(-3px);
+      border-color: var(--blue);
+      background: rgba(96, 165, 250, .12);
+    }
+
+    .music-button:active { transform: translateY(0) scale(.97); }
+    .music-button:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 
     .footer {
       margin-top: 38px;
@@ -243,9 +276,7 @@
     <div class="particle"></div><div class="particle"></div>
   </div>
 
-  <audio id="ambientMusic" loop preload="auto">
-    <source src="ramesesboffline.mp3" type="audio/mpeg" />
-  </audio>
+  <audio id="ambientMusic" preload="auto"></audio>
 
   <main class="container">
     <p class="eyebrow">Live YouTube statistics</p>
@@ -271,6 +302,11 @@
       </article>
     </section>
 
+    <div class="music-controls" aria-label="Contrôles de musique">
+      <button class="music-button" id="muteButton" type="button">🔊 Mute music</button>
+      <button class="music-button" id="skipButton" type="button">⏭ Skip music</button>
+    </div>
+
     <p class="footer">Made by <span>Dimotaga</span></p>
   </main>
 
@@ -290,16 +326,16 @@
     }
 
     function startViewAnimation() {
-  if (viewTimer) clearInterval(viewTimer);
+      if (viewTimer) clearInterval(viewTimer);
 
-  viewTimer = setInterval(() => {
-    if (displayedViews === null) return;
+      viewTimer = setInterval(() => {
+        if (displayedViews === null) return;
 
-    // Augmentation entre 10 et 75 vues toutes les 500ms
-    displayedViews += Math.floor(Math.random() * 66) + 10;
-    updateValue(document.getElementById("channelViews"), displayedViews, true);
-  }, 500);
-}
+        // Progression visuelle : +5 à +30 vues toutes les 500 ms.
+        displayedViews += Math.floor(Math.random() * 26) + 5;
+        updateValue(document.getElementById("channelViews"), displayedViews, true);
+      }, 500);
+    }
 
     async function loadJojoStats() {
       try {
@@ -325,26 +361,80 @@
       }
     }
 
+    // Ajoute les noms exacts des MP3 déposés dans le dossier public.
+    const playlist = [
+      "ramesesboffline.mp3",
+      "letithappen.mp3",
+      "musique-3.mp3"
+    ];
+
     const music = document.getElementById("ambientMusic");
+    const muteButton = document.getElementById("muteButton");
+    const skipButton = document.getElementById("skipButton");
+    let currentTrack = 0;
+    let musicStarted = false;
+
     music.volume = 0.12;
 
-    async function startMusic() {
+    function loadTrack(trackIndex) {
+      if (!playlist.length) return;
+
+      currentTrack = (trackIndex + playlist.length) % playlist.length;
+      music.src = playlist[currentTrack];
+      music.load();
+    }
+
+    async function playMusic() {
+      if (!playlist.length) return;
+
       try {
         await music.play();
-      } catch (_) {
-        // Le navigateur lancera la musique après la première interaction.
+        musicStarted = true;
+      } catch (error) {
+        console.log("La musique attend une interaction utilisateur.", error);
       }
     }
 
-    window.addEventListener("load", () => {
-      loadJojoStats();
-      startMusic();
+    async function skipMusic() {
+      if (!playlist.length) return;
+
+      loadTrack(currentTrack + 1);
+
+      if (musicStarted) {
+        await playMusic();
+      }
+    }
+
+    muteButton.addEventListener("click", () => {
+      music.muted = !music.muted;
+      muteButton.textContent = music.muted ? "🔇 Unmute music" : "🔊 Mute music";
     });
 
-    document.addEventListener("pointerdown", startMusic, { once: true });
-    document.addEventListener("keydown", startMusic, { once: true });
+    skipButton.addEventListener("click", skipMusic);
 
-    // Synchronisation officielle avec le serveur toutes 10 les minutes.
+    music.addEventListener("ended", async () => {
+      if (playlist.length <= 1) {
+        music.currentTime = 0;
+        await playMusic();
+        return;
+      }
+
+      await skipMusic();
+    });
+
+    loadTrack(0);
+
+    function startMusicFromInteraction() {
+      playMusic();
+      document.removeEventListener("pointerdown", startMusicFromInteraction);
+      document.removeEventListener("keydown", startMusicFromInteraction);
+    }
+
+    window.addEventListener("load", loadJojoStats);
+    document.addEventListener("pointerdown", startMusicFromInteraction);
+    document.addEventListener("keydown", startMusicFromInteraction);
+
+    // Synchronisation réelle avec le serveur toutes les 10 minutes.
     setInterval(loadJojoStats, 600_000);
   </script>
 </body>
