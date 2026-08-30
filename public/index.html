@@ -290,16 +290,16 @@
     }
 
     function startViewAnimation() {
-      if (viewTimer) clearInterval(viewTimer);
+  if (viewTimer) clearInterval(viewTimer);
 
-      viewTimer = setInterval(() => {
-        if (displayedViews === null) return;
+  viewTimer = setInterval(() => {
+    if (displayedViews === null) return;
 
-        // Progression visuelle, recalée sur la vraie valeur toutes les 60 secondes.
-        displayedViews += Math.floor(Math.random() * 176) + 25;
-        updateValue(document.getElementById("channelViews"), displayedViews, true);
-      }, 500);
-    }
+    // Augmentation entre 10 et 75 vues toutes les 500ms
+    displayedViews += Math.floor(Math.random() * 66) + 10;
+    updateValue(document.getElementById("channelViews"), displayedViews, true);
+  }, 500);
+}
 
     async function loadJojoStats() {
       try {
@@ -344,8 +344,8 @@
     document.addEventListener("pointerdown", startMusic, { once: true });
     document.addEventListener("keydown", startMusic, { once: true });
 
-    // Synchronisation officielle avec le serveur toutes les minutes.
-    setInterval(loadJojoStats, 60_000);
+    // Synchronisation officielle avec le serveur toutes 10 les minutes.
+    setInterval(loadJojoStats, 600_000);
   </script>
 </body>
 </html>
